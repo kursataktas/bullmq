@@ -196,9 +196,9 @@ export class QueueEvents extends QueueBase {
         connection: isRedisInstance(connection)
           ? (<RedisClient>connection).duplicate()
           : connection,
-        blockingConnection: true,
       },
       Connection,
+      true,
     );
 
     this.opts = Object.assign(
@@ -310,7 +310,9 @@ export class QueueEvents extends QueueBase {
             this.emit(event, id);
           } else {
             this.emit(event as any, restArgs, id);
-            this.emit(`${event}:${restArgs.jobId}` as any, restArgs, id);
+            if (restArgs.jobId) {
+              this.emit(`${event}:${restArgs.jobId}` as any, restArgs, id);
+            }
           }
         }
       }
